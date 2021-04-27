@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ZipCloudClientApp</string>
+    <string name="searching_message">Searching...</string>
+    <string name="search_not_found_message">Not found</string>
+</resources>
