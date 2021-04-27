@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                 // 入力テキストを取得
                 val text = s.toString()
                 if (!REGEX_ZIP_CODE.matches(text)) {
-                    // 郵便番号でない場合は検索しない
+                    // 郵便番号でない場合は検索せず、テキストをクリアして終了
                     address_textview.text = ""
                     return
                 }
@@ -60,10 +60,17 @@ class MainActivity : AppCompatActivity() {
                 GlobalScope.launch(Dispatchers.Main) {
                     withContext(Dispatchers.Default) {
                         getResponse(URL.format(zipCode))
+
                     }.let {
+                        if (isCancelled(zipCode)) {
+                            // キャンセルされた場合は何もせず終了
+                            return@let
+                        }
+
                         // JSONレスポンスをデシリアライズ
                         val results = Gson().fromJson(it, ZipResponse::class.java)?.results
                         if (results == null) {
+                            // 検索失敗した場合はメッセージ表示
                             Log.d(TAG, "Not found zipcode=$zipCode")
                             address_textview.text = getString(R.string.search_not_found_message)
                             return@let
@@ -77,6 +84,18 @@ class MainActivity : AppCompatActivity() {
                             }
                     }
                 }
+            }
+
+            /**
+             * 郵便番号検索がキャンセルされたかどうか判定する。
+             *
+             * @param zipCode 検索した郵便番号
+             * @return キャンセルされていれば `true`
+             */
+            private fun isCancelled(zipCode: String): Boolean {
+                // 検索時の郵便番号から変更されている場合はキャンセル扱い
+                val text = zip_code_edittext.text.toString()
+                return text != zipCode
             }
 
             /**
