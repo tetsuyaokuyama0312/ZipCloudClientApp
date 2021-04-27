@@ -2,7 +2,9 @@
 A sample application for Web API calls with Kotlin and ZipCloud.
 
 ## Screenshots
-  ![screenshot01](screenshot01.png)
-  ![screenshot02](screenshot02.png)
-  ![screenshot03](screenshot03.png)
-  ![screenshot04](screenshot04.png)
+<p>
+  <img src="screenshots/screenshot01.png" width="360">
+  <img src="screenshots/screenshot02.png" width="360">
+  <img src="screenshots/screenshot03.png" width="360">
+  <img src="screenshots/screenshot04.png" width="360">
+</p>
