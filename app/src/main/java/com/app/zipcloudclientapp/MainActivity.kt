@@ -31,9 +31,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         zip_code_edittext.addTextChangedListener(object : TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
                 // 入力テキストを取得
