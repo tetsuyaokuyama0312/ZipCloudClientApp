@@ -49,67 +49,67 @@ class MainActivity : AppCompatActivity() {
                 // 検索中メッセージ表示
                 address_textview.text = getString(R.string.searching_message)
             }
-
-            /**
-             * ZipCloudAPIを呼び出し、レスポンスとして受け取った住所情報を画面上に表示する。
-             *
-             * @param zipCode 郵便番号
-             */
-            private fun callZipCloudApi(zipCode: String) {
-                // WebAPI呼び出しをコルーチンで非同期実行
-                GlobalScope.launch(Dispatchers.Main) {
-                    withContext(Dispatchers.Default) {
-                        getResponse(URL.format(zipCode))
-
-                    }.let {
-                        if (isCancelled(zipCode)) {
-                            // キャンセルされた場合は何もせず終了
-                            return@let
-                        }
-
-                        // JSONレスポンスをデシリアライズ
-                        val results = Gson().fromJson(it, ZipResponse::class.java)?.results
-                        if (results == null) {
-                            // 検索失敗した場合はメッセージ表示
-                            Log.d(TAG, "Not found zipcode=$zipCode")
-                            address_textview.text = getString(R.string.search_not_found_message)
-                            return@let
-                        }
-
-                        // ペイロードの1件目を表示
-                        val address = results[0]
-                        address_textview.text =
-                            address.run {
-                                arrayOf(address1, address2, address3).joinToString(" ")
-                            }
-                    }
-                }
-            }
-
-            /**
-             * 郵便番号検索がキャンセルされたかどうか判定する。
-             *
-             * @param zipCode 検索した郵便番号
-             * @return キャンセルされていれば `true`
-             */
-            private fun isCancelled(zipCode: String): Boolean {
-                // 検索時の郵便番号から変更されている場合はキャンセル扱い
-                val text = zip_code_edittext.text.toString()
-                return text != zipCode
-            }
-
-            /**
-             * WebAPIを呼び出しレスポンスを受け取る。
-             *
-             * @param url WebAPIのURL
-             * @return レスポンス
-             */
-            private fun getResponse(url: String): String? {
-                return OkHttpClient()
-                    .newCall(Request.Builder().url(url).build())
-                    .execute()
-                    .body?.string()
-            }
         })
+    }
+
+    /**
+     * ZipCloudAPIを呼び出し、レスポンスとして受け取った住所情報を画面上に表示する。
+     *
+     * @param zipCode 郵便番号
+     */
+    private fun callZipCloudApi(zipCode: String) {
+        // WebAPI呼び出しをコルーチンで非同期実行
+        GlobalScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.Default) {
+                getResponse(URL.format(zipCode))
+
+            }.let {
+                if (isCancelled(zipCode)) {
+                    // キャンセルされた場合は何もせず終了
+                    return@let
+                }
+
+                // JSONレスポンスをデシリアライズ
+                val results = Gson().fromJson(it, ZipResponse::class.java)?.results
+                if (results == null) {
+                    // 検索失敗した場合はメッセージ表示
+                    Log.d(TAG, "Not found zipcode=$zipCode")
+                    address_textview.text = getString(R.string.search_not_found_message)
+                    return@let
+                }
+
+                // ペイロードの1件目を表示
+                val address = results[0]
+                address_textview.text =
+                    address.run {
+                        arrayOf(address1, address2, address3).joinToString(" ")
+                    }
+            }
+        }
+    }
+
+    /**
+     * 郵便番号検索がキャンセルされたかどうか判定する。
+     *
+     * @param zipCode 検索した郵便番号
+     * @return キャンセルされていれば `true`
+     */
+    private fun isCancelled(zipCode: String): Boolean {
+        // 検索時の郵便番号から変更されている場合はキャンセル扱い
+        val text = zip_code_edittext.text.toString()
+        return text != zipCode
+    }
+
+    /**
+     * WebAPIを呼び出しレスポンスを受け取る。
+     *
+     * @param url WebAPIのURL
+     * @return レスポンス
+     */
+    private fun getResponse(url: String): String? {
+        return OkHttpClient()
+            .newCall(Request.Builder().url(url).build())
+            .execute()
+            .body?.string()
     }
 }
